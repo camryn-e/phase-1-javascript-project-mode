@@ -1,71 +1,44 @@
-function getGenerationSpec(genID, text){
-    //console.log(event.target);
-    let legendList = document.getElementById("legend-list")
-    let genList = document.getElementById('generation-species')
-    let title = document.getElementById('gen-name')
-    // let like = document.getElementById('like-name')
-    // console.log('like:', like)
-    // toggleShow(like)
-    legendList.innerHTML = '';
-    title.innerText = text
-    genList.innerHTML = '';
-    // let legendButton = document.querySelector(".legend-button")
-    //         legendButton.style.display = "block"
-    //         legendButton.addEventListener('click', function(event){
-    //             let legContent = document.getElementById("legend-list")
-    //             let genSpec = document.getElementById('generation-species')
-    //             legContent.style.display = "block"
-    //             genSpec.style.display = "none"
-    //         })
-    // let legendButton = document.querySelector("legend-button")
-    // toggleShow(legendButton)
-    //let legendButton = document.querySelector("legend-button")
-    //console.log("legend btn", document.getElementById("legend-button"))
-    //toggleShow(legendButton)
-    //console.log(event.target);
-    fetch(`https://pokeapi.co/api/v2/generation/${genID}/`)
+function getSpecies() {
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=1118`)
     .then(resp => resp.json())
-    .then((gen) => {
-        //console.log("gen:", gen)
-        let genSpecies = gen.pokemon_species;
-        //console.log("genSpecies:", genSpecies)
-        const genList = document.getElementById('generation-species')
+    .then((species) => {
+        let allSpecies = species.results;
+        console.log("all species:", allSpecies)
+        const speciesList = document.getElementById('species-list')
         let i;
-        for (i = 0; i < genSpecies.length; i++) {
-            findLegendary(genSpecies[i].name)
+        for (i = 0; i < allSpecies.length; i++) {
             const pokeLi = document.createElement("ul")
-            const pokeText = document.createTextNode(genSpecies[i].name)
-            //console.log(pokeText)
+            const pokeText = document.createTextNode(allSpecies[i].name)
             pokeLi.appendChild(pokeText);
-            genList.appendChild(pokeLi);
+            speciesList.appendChild(pokeLi);
         }
-        let legendButton = document.querySelector(".legend-button")
-            legendButton.style.display = "block"
-            legendButton.addEventListener('click', function(event){
-                let legContent = document.getElementById("legend-list")
-                let genSpec = document.getElementById('generation-species')
-                legContent.style.display = "block"
-                genSpec.style.display = "none"
-            })
     })
 }
 
-
-function findLegendary(name){
-    let legendList = document.getElementById("legend-list")
-    fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`)
+function getGenerationSpec(genID, text){
+    let genList = document.getElementById('generation-species')
+    let title = document.getElementById('gen-name')
+    title.innerText = text
+    genList.innerHTML = '';
+    const speciesList = document.getElementById('species-list')
+    speciesList.innerHTML = '';
+    fetch(`https://pokeapi.co/api/v2/generation/${genID}/`)
     .then(resp => resp.json())
-    .then(p => {
-        if(p.is_legendary){
-            const legLi = document.createElement("LI")
-            const legText = document.createTextNode(name)
-            legLi.appendChild(legText)
-            legendList.appendChild(legLi)
+    .then((gen) => {
+        let genSpecies = gen.pokemon_species;
+        const genList = document.getElementById('generation-species')
+        let i;
+        for (i = 0; i < genSpecies.length; i++) {
+            const pokeLi = document.createElement("ul")
+            const pokeText = document.createTextNode(genSpecies[i].name)
+            pokeLi.appendChild(pokeText);
+            genList.appendChild(pokeLi);
         }
     })
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    getSpecies()
     generationGenerator()
 
     document.querySelector(".dropbtn").addEventListener('click', function(event){
@@ -84,11 +57,8 @@ function generationGenerator(){
             const genLi = document.createElement("UL")
             genLi.setAttribute("id", `${i + 1}`)
             genLi.innerText = genNames[i].name
-            //const genText = document.createTextNode(name)
-            //getLi.appendChild(legText)
             const genList = document.getElementById("gen-dropdown")
             genList.appendChild(genLi)
-            //genLi.addEventListener('click', getGeneration(genLi.getAttribute("id"), genLi.innerText))
         }
         const genSelectors = document.querySelectorAll("div#gen-dropdown ul");
         console.log('genSelectors:', genSelectors)
@@ -98,25 +68,8 @@ function generationGenerator(){
         console.log('currSelect:', currSelect)
         let currID = currSelect.getAttribute('id')
         let currText = currSelect.innerText
-        currSelect.addEventListener('click', function(event){
-            // console.log("event target:", event.target)
-            // let legendButton = document.querySelector(".legend-button")
-            // legendButton.style.display = "block"
-            // legendButton.addEventListener('click', function(event){
-            //     let legContent = document.getElementById("legend-content")
-            //     let genSpec = document.getElementById('generation-species')
-            //     legContent.style.display = "block"
-            //     genSpec.style.display = "none"
-            // })
+        currSelect.addEventListener('click', (event) => {
             getGenerationSpec(currID, currText)
-            // let legendButton = document.querySelector(".legend-button")
-            // legendButton.style.display = "block"
-            // legendButton.addEventListener('click', function(event){
-            //     let legContent = document.getElementById("legend-list")
-            //     let genSpec = document.getElementById('generation-species')
-            //     legContent.style.display = "block"
-            //     genSpec.style.display = "none"
-            // })
         })
     }
     })
@@ -129,8 +82,3 @@ function toggleShow(elem) {
         elem.style.display = "none";
     }
 }
-
-// function toggleLegendButton() {
-//     let legendButton = document.querySelector(".legend-button");
-//     legendButton.style.display = "block"
-// }
